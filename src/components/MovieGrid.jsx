@@ -6,7 +6,7 @@ function MovieGrid({ movies, status, error, onRetry }) {
     return (
       <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
         {Array.from({ length: 8 }, (_, i) => (
-          <div key={i} className="animate-pulse overflow-hidden rounded-xl border border-emerald-100 bg-white">
+          <div key={i} className="animate-pulse overflow-hidden rounded-xl border border-slate-200">
             <div className="aspect-[2/3] bg-slate-100" />
             <div className="space-y-2 p-3">
               <div className="h-4 w-3/4 rounded bg-slate-100" />
@@ -25,7 +25,7 @@ function MovieGrid({ movies, status, error, onRetry }) {
         <p className="mt-1 text-sm text-red-500">{error?.message}</p>
         {onRetry && (
           <button onClick={onRetry}
-                  className="mt-4 rounded-lg border border-red-300 bg-white px-4 py-2 text-sm text-red-700 hover:bg-red-100">
+            className="mt-4 rounded-lg border border-red-300 bg-white px-4 py-2 text-sm text-red-700 hover:bg-red-100">
             ลองใหม่
           </button>
         )}
