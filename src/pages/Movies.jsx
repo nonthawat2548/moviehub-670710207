@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import MovieGrid from '../components/MovieGrid';
-import { getMovies, CACHE_KEY } from '../api/tmdb';
-import { forget } from '../api/cache';
+import { getMovies } from '../api/backend';
+//import { forget } from '../api/cache';
 
 function Movies() {
   const [query, setQuery] = useState('');          // คำค้น (controlled input) กรองในเครื่อง ไม่ยิง API
@@ -72,7 +72,7 @@ function Movies() {
 
       {/* ปุ่มลองใหม่ต้องล้าง cache ก่อน ไม่งั้นจะได้ของเก่าหรือ error เดิมซ้ำ */}
       <MovieGrid movies={shown} status={status} error={error}
-        onRetry={() => { forget(CACHE_KEY); setReloadKey(k => k + 1); }} />
+        onRetry={() => { setReloadKey(k => k + 1); }} />
     </div>
   );
 }
