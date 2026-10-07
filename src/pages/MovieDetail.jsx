@@ -3,18 +3,15 @@ import { useParams, Link } from 'react-router-dom';
 import ReviewForm from '../components/ReviewForm';
 import ReviewList from '../components/ReviewList';
 import MovieActions from '../components/MovieActions';
-//import { getMovie } from '../api/tmdb';
-import { getMovie } from '../api/backend';   // TODO ขั้นที่ 4: เปลี่ยนจาก '../api/tmdb' เป็น '../api/backend'
+import { getMovie, getReviews, postReview } from '../api/backend';
 import { useAuth } from '../auth/AuthContext';
-// TODO ขั้นที่ 3: import { getReviews, postReview } from '../api/backend';
-import { getReviews, postReview } from '../api/backend';   // TODO ขั้นที่ 3: import ฟังก์ชัน getReviews() และ postReview() จาก backend.js
 function MovieDetail() {
   const { id } = useParams();                       // ได้เป็น string เสมอ (ตอนนี้คือรหัสของ TMDB)
   const [movie, setMovie] = useState(null);
   const [status, setStatus] = useState('loading');
   const [error, setError] = useState(null);
   const [reviews, setReviews] = useState([]);       // รีวิวจาก backend ของเรา (ไม่ใช่ TMDB)
-  const { isLoggedIn, token, member } = useAuth();                 // TODO ขั้นที่ 3: ดึง token และ member มาด้วย
+  const { isLoggedIn, token, member } = useAuth();
 
   useEffect(() => {
     let ignore = false;
@@ -34,6 +31,7 @@ function MovieDetail() {
   // โหลดรีวิวของเรื่องนี้จาก backend ของเรา แยก effect จาก TMDB เพราะคนละ server
   useEffect(() => {
     let ignore = false;
+    setReviews([]);
     getReviews(id)
       .then(data => { if (!ignore) setReviews(data.items); })
       .catch(() => { if (!ignore) setReviews([]); });   // backend ล่มก็แค่ไม่มีรีวิว หน้าหนังยังดูได้
@@ -43,21 +41,10 @@ function MovieDetail() {
   // ส่งรีวิวจริง: ReviewForm เรียกฟังก์ชันนี้ตอนกดส่ง ถ้า throw ฟอร์มจะโชว์ข้อความ error เอง
   async function handleReviewSubmit(text) {
     const saved = await postReview(id, text, token);          // 201 ได้ { id, text, createdAt }
-    setReviews([
+    setReviews(current => [
       { ...saved, member: { id: member.id, displayName: member.displayName }, score: null },
-      ...reviews,                                              // ต่อหน้ารายการเดิม
+      ...current,
     ]);
-  }
-
-  useEffect(() => {
-    setReviews([]);                                // ชั่วคราว: ยังไม่มีรีวิว
-  }, [id]);
-
-  // TODO ขั้นที่ 3 (ข): ส่งรีวิวจริง
-  async function handleReviewSubmit(text) {
-    //   const saved = await postReview(id, text, token);
-    //   แล้วเติมรีวิวใหม่เข้าไปหน้าสุดของ reviews ด้วย spread (ไม่ push) ใช้ชื่อจาก member ใน useAuth()
-    throw new Error('ยังไม่ได้ต่อ API ส่งรีวิว (ขั้นที่ 3)');
   }
 
   if (status === 'loading') {
