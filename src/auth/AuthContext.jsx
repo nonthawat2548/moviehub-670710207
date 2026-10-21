@@ -37,7 +37,10 @@ export function AuthProvider({ children }) {
     localStorage.removeItem(MEMBER_KEY);
   }
 
-  const value = { token, member, isLoggedIn: Boolean(token), login, register, logout };
+    // isAdmin อ่านจาก member ที่ server ส่งมาตอน login ใช้แค่ "โชว์/ซ่อน" เมนูและหน้า
+  // การป้องกันจริงอยู่ที่ Go: ต่อให้แก้ localStorage ให้ role เป็น admin ก็ยิง /api/admin ไม่ผ่านอยู่ดี
+  const isAdmin = member?.role === 'admin';
+  const value = { token, member, isLoggedIn: Boolean(token), isAdmin, login, register, logout };
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 

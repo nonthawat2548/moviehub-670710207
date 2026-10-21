@@ -123,19 +123,13 @@ async function input(element, value) {
 async function submit() {
   await act(async () => container.querySelector('form').dispatchEvent(new Event('submit', { bubbles: true, cancelable: true })));
 }
-test('registration blocks mismatched passwords and sends only the existing API arguments when corrected', async () => {
+test('registration submits with a single password field', async () => {
   await render(<Register />);
   const inputs = container.querySelectorAll('input');
-  expect(inputs[3].required).toBe(true);
+  expect(container.querySelectorAll('input[type="password"]')).toHaveLength(1);
   await input(inputs[0], 'Test');
   await input(inputs[1], 'test@example.com');
   await input(inputs[2], 'secret');
-  await input(inputs[3], 'different');
-  await submit();
-  expect(register).not.toHaveBeenCalled();
-  expect(container.textContent).toContain('รหัสผ่านและยืนยันรหัสผ่านไม่ตรงกัน');
-  expect(container.querySelector('button').disabled).toBe(false);
-  await input(inputs[3], 'secret');
   await submit();
   expect(register).toHaveBeenCalledWith('test@example.com', 'secret', 'Test');
   expect(mockNavigate).toHaveBeenCalledWith('/');

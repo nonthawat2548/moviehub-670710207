@@ -70,6 +70,42 @@ export async function getMovies() {
 }
 
 export async function getMovie(movieId) {
-  return apiFetch(`/api/movies/${movieId}`);
+  const items = await getMovies();
+  const movie = items.find(m => String(m.id) === String(movieId));
+  if (!movie) {
+    const err = new Error('ไม่พบหนังเรื่องนี้');
+    err.status = 404;
+    throw err;
+  }
+  return movie;
+}
+// ---------- แนวหนัง (สาธารณะ ใช้ทำ dropdown ในฟอร์มหลังบ้าน) ----------
+export async function getGenres() {
+  const data = await apiFetch('/api/genres');
+  return data.items;                                      // [{ id, nameEn, nameTh }]
+}
+
+// ---------- หลังบ้าน (ทุกตัวต้องแนบ token ของ admin ถ้าเป็น member Go ตอบ 403) ----------
+export function getAdminStats(token) {
+  return apiFetch('/api/admin/stats', { token });
+}
+export async function getAdminMembers(token) {
+  const data = await apiFetch('/api/admin/members', { token });
+  return data.items;
+}
+export function setMemberRole(memberId, role, token) {
+  return apiFetch(`/api/admin/members/${memberId}/role`, { method: 'PUT', body: { role }, token });
+}
+export function getAdminMovie(movieId, token) {
+  return apiFetch(`/api/admin/movies/${movieId}`, { token });
+}
+export function createMovie(fields, token) {
+  return apiFetch('/api/admin/movies', { method: 'POST', body: fields, token });
+}
+export function updateMovie(movieId, fields, token) {
+  return apiFetch(`/api/admin/movies/${movieId}`, { method: 'PUT', body: fields, token });
+}
+export function deleteMovie(movieId, token) {
+  return apiFetch(`/api/admin/movies/${movieId}`, { method: 'DELETE', token });       // 204 ได้ null
 }
 
