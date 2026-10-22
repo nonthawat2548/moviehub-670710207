@@ -21,7 +21,7 @@ function Wishlist() {
       try {
         const { items } = await getWishlist(token);
         if (!ignore) {
-          setMovies(items);
+          setMovies(items.map(item => item.movie ?? item));
           setStatus('success');
         }
       } catch (err) {
